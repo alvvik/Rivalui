@@ -1,18 +1,18 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "tauri",
+  "productName": "RivalUI",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "dev.alvv.RivalUI",
   "build": {
     "frontendDist": "../out",
-    "devUrl": "http://localhost:3000",
+    "devUrl": "http://localhost:2877",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },
   "app": {
     "windows": [
       {
-        "title": "tauri",
+        "title": "RivalUI",
         "width": 800,
         "height": 600,
         "resizable": true,
