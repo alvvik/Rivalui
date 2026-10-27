@@ -36,10 +36,10 @@
 
 Grab the latest release for your platform from [**GitHub Releases**](https://github.com/alvvik/Rivalui/releases/latest):
 
-| Platform | Format |
-| -------- | ------ |
-| Windows  | `.exe` |
-| macOS    | `.dmg` |
+| Platform | Format                      |
+| -------- | --------------------------- |
+| Windows  | `.exe`                      |
+| macOS    | `.dmg`                      |
 | Linux    | `.AppImage`, `.deb`, `.rpm` |
 
 ### Prerequisites
@@ -57,10 +57,10 @@ pip install rivalcfg
 
 ### Tech Stack
 
-| Layer    | Technology |
-| -------- | ---------- |
-| Desktop  | [Tauri v2](https://v2.tauri.app/) (Rust) |
-| Frontend | [Next.js](https://nextjs.org/) (App Router, static export) |
+| Layer    | Technology                                                                                                                |
+| -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Desktop  | [Tauri v2](https://v2.tauri.app/) (Rust)                                                                                  |
+| Frontend | [Next.js](https://nextjs.org/) (App Router, static export)                                                                |
 | UI       | [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS 4](https://tailwindcss.com/) |
 
 ### Getting Started
@@ -89,7 +89,7 @@ Compiled binaries will be placed in `src-tauri/target/release/bundle/`.
 
 ```
 RivalUI/
-├── app/                  # Next.js App Router pages
+├── src/app/                  # Next.js App Router pages
 ├── src-tauri/            # Tauri / Rust backend
 │   ├── src/              # Rust source code
 │   ├── icons/            # App icons
