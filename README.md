@@ -89,6 +89,7 @@ Compiled binaries will be placed in `src-tauri/target/release/bundle/`.
 
 ```
 RivalUI/
+├── src/components # Components used in project
 ├── src/app/                  # Next.js App Router pages
 ├── src-tauri/            # Tauri / Rust backend
 │   ├── src/              # Rust source code
