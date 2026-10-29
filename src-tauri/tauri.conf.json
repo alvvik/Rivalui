@@ -24,6 +24,9 @@
     }
   },
   "bundle": {
+    "resources": [
+      "python/**/*"
+    ],
     "active": true,
     "targets": "all",
     "icon": [

@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 
 interface DeviceData {
   mouseName: string;
   batteryLevel: number;
-  currentDpi: number;
+  currentDpi: string | number;
   pollingRate: string;
 }
+
 export default function Home() {
   const [deviceData, setDeviceData] = useState<DeviceData>({
     mouseName: "SteelSeries Rival 650 Wireless",
@@ -17,23 +20,55 @@ export default function Home() {
   });
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    async function fetchDeviceInfo() {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/device");
-        if (res.ok) {
-          const data = await res.json();
-          setDeviceData(data);
+  const parseAndSetData = useCallback((jsonStr: string) => {
+    try {
+      const data = JSON.parse(jsonStr);
+      setDeviceData((prev) => {
+        if (
+          prev.mouseName === data.mouseName &&
+          prev.batteryLevel === data.batteryLevel &&
+          prev.currentDpi === data.currentDpi &&
+          prev.pollingRate === data.pollingRate
+        ) {
+          return prev;
         }
-      } catch {
-      } finally {
-        setLoading(false);
-      }
+        return {
+          mouseName: data.mouseName || "SteelSeries Rival 650 Wireless",
+          batteryLevel: data.batteryLevel ?? 88,
+          currentDpi: data.currentDpi || 1600,
+          pollingRate: data.pollingRate || "1000 Hz",
+        };
+      });
+    } catch (err) {
+      console.error("Failed to parse device info JSON:", err);
+    } finally {
+      setLoading(false);
     }
-
-    fetchDeviceInfo();
   }, []);
+
+  useEffect(() => {
+    invoke<string>("get_mouse_info")
+      .then((jsonStr) => parseAndSetData(jsonStr))
+      .catch((err) => {
+        console.error("Failed to fetch on mount:", err);
+        setLoading(false);
+      });
+
+    const unlistenPromise = listen<string>("mouse-state-changed", (event) => {
+      parseAndSetData(event.payload);
+    });
+
+    const interval = setInterval(() => {
+      invoke<string>("get_mouse_info")
+        .then((jsonStr) => parseAndSetData(jsonStr))
+        .catch((err) => console.error("Background fetch failed:", err));
+    }, 2000);
+
+    return () => {
+      unlistenPromise.then((unlisten) => unlisten());
+      clearInterval(interval);
+    };
+  }, [parseAndSetData]);
 
   return (
     <div className="max-w-4xl mx-auto py-10 space-y-6 select-none">

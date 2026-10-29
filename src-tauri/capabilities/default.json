@@ -6,6 +6,22 @@
     "main"
   ],
   "permissions": [
-    "core:default"
+    "core:default",
+    "shell:allow-execute",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "cmd": "python3",
+          "args": true,
+          "name": "python3"
+        },
+        {
+          "cmd": "rivalcfg",
+          "args": true,
+          "name": "rivalcfg"
+        }
+      ]
+    }
   ]
 }
