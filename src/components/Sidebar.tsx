@@ -1,5 +1,5 @@
 "use client";
-import { House } from "lucide-react";
+import { Gauge, House } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -9,6 +9,12 @@ const items = [
     icon: <House className="size-5 shrink-0" />,
     label: "Home",
     href: "/",
+  },
+  {
+    id: 1,
+    icon: <Gauge className="size-5 shrink-0" />,
+    label: "DPI",
+    href: "/dpi",
   },
 ];
 
