@@ -18,20 +18,13 @@ export const metadata: Metadata = {
   description: "RivalUI Tauri App",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="pl"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-base-100 text-base-content overflow-hidden">
+    <html lang="pl" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="bg-base-100 text-base-content flex min-h-full flex-col overflow-hidden">
         <div className="flex h-screen w-screen overflow-hidden">
           <Sidebar />
-          <main className="flex-1 flex flex-col overflow-y-auto bg-base-100 p-6 md:p-8">
+          <main className="bg-base-100 flex flex-1 flex-col overflow-y-auto p-6 md:p-8">
             {children}
           </main>
         </div>

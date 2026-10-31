@@ -71,12 +71,12 @@ export default function Home() {
   }, [parseAndSetData]);
 
   return (
-    <div className="max-w-4xl mx-auto py-10 space-y-6 select-none">
-      <h1 className="text-lg font-medium px-1">Device Information</h1>
+    <div className="mx-auto max-w-4xl space-y-6 py-10 select-none">
+      <h1 className="px-1 text-lg font-medium">Device Information</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-5 rounded-xl border border-base-300 bg-base-100 space-y-2">
-          <div className="text-xs font-medium text-base-content/50 uppercase tracking-wider">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="border-base-300 bg-base-100 space-y-2 rounded-xl border p-5">
+          <div className="text-base-content/50 text-xs font-medium tracking-wider uppercase">
             Model
           </div>
           <div className="text-base font-semibold">
@@ -88,42 +88,38 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="p-5 rounded-xl border border-base-300 bg-base-100 space-y-2">
-          <div className="text-xs font-medium text-base-content/50 uppercase tracking-wider">
+        <div className="border-base-300 bg-base-100 space-y-2 rounded-xl border p-5">
+          <div className="text-base-content/50 text-xs font-medium tracking-wider uppercase">
             Battery Status
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-base font-semibold ">
+            <span className="text-base font-semibold">
               {loading ? "..." : `${deviceData.batteryLevel}%`}
             </span>
-            <span className="text-xs text-emerald-500 font-medium">
-              Connected
-            </span>
+            <span className="text-xs font-medium text-emerald-500">Connected</span>
           </div>
-          <div className="w-full h-1.5 bg-base-300 rounded-full overflow-hidden">
+          <div className="bg-base-300 h-1.5 w-full overflow-hidden rounded-full">
             <div
-              className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+              className="h-full rounded-full bg-emerald-500 transition-all duration-500"
               style={{ width: `${loading ? 0 : deviceData.batteryLevel}%` }}
             ></div>
           </div>
         </div>
 
-        <div className="p-5 rounded-xl border border-base-300 bg-base-100 space-y-2">
-          <div className="text-xs font-medium text-base-content/50 uppercase tracking-wider">
+        <div className="border-base-300 bg-base-100 space-y-2 rounded-xl border p-5">
+          <div className="text-base-content/50 text-xs font-medium tracking-wider uppercase">
             Sensitivity
           </div>
-          <div className="text-base font-semibold ">
+          <div className="text-base font-semibold">
             {loading ? "..." : `${deviceData.currentDpi} DPI`}
           </div>
         </div>
 
-        <div className="p-5 rounded-xl border border-base-300 bg-base-100 space-y-2">
-          <div className="text-xs font-medium text-base-content/50 uppercase tracking-wider">
+        <div className="border-base-300 bg-base-100 space-y-2 rounded-xl border p-5">
+          <div className="text-base-content/50 text-xs font-medium tracking-wider uppercase">
             Polling Rate
           </div>
-          <div className="text-base font-semibold ">
-            {loading ? "..." : deviceData.pollingRate}
-          </div>
+          <div className="text-base font-semibold">{loading ? "..." : deviceData.pollingRate}</div>
         </div>
       </div>
     </div>

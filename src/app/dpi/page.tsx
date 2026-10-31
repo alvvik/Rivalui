@@ -42,9 +42,7 @@ export default function DpiPage() {
   const activeStage = stages.find((s) => s.id === activeStageId) || stages[1];
 
   const handleDpiChange = (newDpi: number) => {
-    const updated = stages.map((s) =>
-      s.id === activeStageId ? { ...s, dpi: newDpi } : s,
-    );
+    const updated = stages.map((s) => (s.id === activeStageId ? { ...s, dpi: newDpi } : s));
     setStages(updated);
     try {
       localStorage.setItem("dpi_stages", JSON.stringify(updated));
@@ -65,20 +63,20 @@ export default function DpiPage() {
 
   if (!mounted) {
     return (
-      <div className="max-w-2xl mx-auto py-10 space-y-6 select-none">
-        <h1 className="text-lg font-medium px-1">Change dpi</h1>
-        <div className="border border-base-300 rounded-lg bg-base-100 p-6 h-64 opacity-50"></div>
+      <div className="mx-auto max-w-2xl space-y-6 py-10 select-none">
+        <h1 className="px-1 text-lg font-medium">Change dpi</h1>
+        <div className="border-base-300 bg-base-100 h-64 rounded-lg border p-6 opacity-50"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-10 space-y-6 select-none">
-      <h1 className="text-lg font-medium px-1">Change dpi</h1>
+    <div className="mx-auto max-w-2xl space-y-6 py-10 select-none">
+      <h1 className="px-1 text-lg font-medium">Change dpi</h1>
 
-      <div className="border border-base-300 rounded-lg bg-base-100 p-6 space-y-6">
+      <div className="border-base-300 bg-base-100 space-y-6 rounded-lg border p-6">
         <div className="space-y-3">
-          <label className="text-xs font-medium text-base-content/60 uppercase tracking-wider">
+          <label className="text-base-content/60 text-xs font-medium tracking-wider uppercase">
             DPI Stages
           </label>
           <div className="grid grid-cols-4 gap-2">
@@ -88,28 +86,24 @@ export default function DpiPage() {
                 <button
                   key={stage.id}
                   onClick={() => handleStageSelect(stage.id)}
-                  className={`p-3 rounded-md border text-center transition-colors ${
+                  className={`rounded-md border p-3 text-center transition-colors ${
                     isActive
                       ? "border-primary bg-primary text-primary-content font-medium"
                       : "border-base-300 bg-base-100 hover:bg-base-200"
                   }`}
                 >
                   <div className="text-xs opacity-80">Stage {stage.id}</div>
-                  <div className="text-sm font-semibold  mt-0.5">
-                    {stage.dpi}
-                  </div>
+                  <div className="mt-0.5 text-sm font-semibold">{stage.dpi}</div>
                 </button>
               );
             })}
           </div>
         </div>
 
-        <div className="space-y-3 pt-4 border-t border-base-200">
+        <div className="border-base-200 space-y-3 border-t pt-4">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">
-              Stage {activeStageId} Sensitivity
-            </label>
-            <div className="flex items-center gap-1  text-sm">
+            <label className="text-sm font-medium">Stage {activeStageId} Sensitivity</label>
+            <div className="flex items-center gap-1 text-sm">
               <input
                 type="number"
                 min="100"
@@ -118,12 +112,11 @@ export default function DpiPage() {
                 value={activeStage.dpi}
                 onChange={(e) => {
                   const val = parseInt(e.target.value);
-                  if (!isNaN(val))
-                    handleDpiChange(Math.min(16000, Math.max(100, val)));
+                  if (!isNaN(val)) handleDpiChange(Math.min(16000, Math.max(100, val)));
                 }}
-                className="input input-bordered input-sm w-20 text-center "
+                className="input input-bordered input-sm w-20 text-center"
               />
-              <span className="text-xs text-base-content/60">DPI</span>
+              <span className="text-base-content/60 text-xs">DPI</span>
             </div>
           </div>
 
@@ -139,7 +132,7 @@ export default function DpiPage() {
         </div>
 
         <div className="space-y-2 pt-2">
-          <label className="text-xs font-medium text-base-content/60 uppercase tracking-wider">
+          <label className="text-base-content/60 text-xs font-medium tracking-wider uppercase">
             Presets
           </label>
           <div className="flex flex-wrap gap-1.5">
@@ -147,10 +140,8 @@ export default function DpiPage() {
               <button
                 key={preset}
                 onClick={() => handleDpiChange(preset)}
-                className={`btn btn-xs  ${
-                  activeStage.dpi === preset
-                    ? "btn-neutral"
-                    : "btn-ghost border border-base-300"
+                className={`btn btn-xs ${
+                  activeStage.dpi === preset ? "btn-neutral" : "btn-ghost border-base-300 border"
                 }`}
               >
                 {preset}

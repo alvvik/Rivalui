@@ -21,9 +21,9 @@ const items = [
 export default function Sidebar() {
   const pathname = usePathname();
   return (
-    <aside className="flex h-full flex-col bg-base-200 text-base-content w-48 p-4 gap-4 shadow-lg shrink-0 border-r border-base-300">
-      <div className="px-2 py-3 text-2xl font-black flex items-center gap-2 border-b border-base-300">
-        <h1 className="text-primary ">RivalUI</h1>
+    <aside className="bg-base-200 text-base-content border-base-300 flex h-full w-48 shrink-0 flex-col gap-4 border-r p-4 shadow-lg">
+      <div className="border-base-300 flex items-center gap-2 border-b px-2 py-3 text-2xl font-black">
+        <h1 className="text-primary">RivalUI</h1>
       </div>
       <ul className="menu w-full grow gap-1.5 p-0">
         {items.map((item) => {
@@ -32,10 +32,8 @@ export default function Sidebar() {
             <li key={item.id}>
               <Link
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary text-primary-content shadow-md"
-                    : "hover:bg-base-300"
+                className={`flex items-center gap-3 rounded-lg px-4 py-3 font-medium transition-colors ${
+                  isActive ? "bg-primary text-primary-content shadow-md" : "hover:bg-base-300"
                 }`}
               >
                 {item.icon}
