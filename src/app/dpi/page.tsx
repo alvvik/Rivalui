@@ -1,29 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface DpiStage {
   id: number;
   dpi: number;
 }
 
+const DEFAULT_STAGES: DpiStage[] = [
+  { id: 1, dpi: 800 },
+  { id: 2, dpi: 1600 },
+  { id: 3, dpi: 3200 },
+  { id: 4, dpi: 6400 },
+];
+
 export default function DpiPage() {
-  const [stages, setStages] = useState<DpiStage[]>([
-    { id: 1, dpi: 800 },
-    { id: 2, dpi: 1600 },
-    { id: 3, dpi: 3200 },
-    { id: 4, dpi: 6400 },
-  ]);
+  const [mounted, setMounted] = useState(false);
+  const [stages, setStages] = useState<DpiStage[]>(DEFAULT_STAGES);
   const [activeStageId, setActiveStageId] = useState<number>(2);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setMounted(true);
+      try {
+        const savedStages = localStorage.getItem("dpi_stages");
+        const savedActive = localStorage.getItem("current_stage");
+        if (savedStages) {
+          setStages(JSON.parse(savedStages));
+        }
+        if (savedActive) {
+          setActiveStageId(Number(savedActive));
+        }
+      } catch (e) {
+        console.error("Failed to load from localStorage", e);
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const activeStage = stages.find((s) => s.id === activeStageId) || stages[1];
 
   const handleDpiChange = (newDpi: number) => {
-    setStages(
-      stages.map((s) => (s.id === activeStageId ? { ...s, dpi: newDpi } : s)),
+    const updated = stages.map((s) =>
+      s.id === activeStageId ? { ...s, dpi: newDpi } : s,
     );
+    setStages(updated);
+    try {
+      localStorage.setItem("dpi_stages", JSON.stringify(updated));
+    } catch (e) {
+      console.error("Failed to save to localStorage", e);
+    }
     // call
   };
+
+  const handleStageSelect = (id: number) => {
+    setActiveStageId(id);
+    try {
+      localStorage.setItem("current_stage", id.toString());
+    } catch (e) {
+      console.error("Failed to save to localStorage", e);
+    }
+  };
+
+  if (!mounted) {
+    return (
+      <div className="max-w-2xl mx-auto py-10 space-y-6 select-none">
+        <h1 className="text-lg font-medium px-1">Change dpi</h1>
+        <div className="border border-base-300 rounded-lg bg-base-100 p-6 h-64 opacity-50"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto py-10 space-y-6 select-none">
@@ -40,7 +87,7 @@ export default function DpiPage() {
               return (
                 <button
                   key={stage.id}
-                  onClick={() => setActiveStageId(stage.id)}
+                  onClick={() => handleStageSelect(stage.id)}
                   className={`p-3 rounded-md border text-center transition-colors ${
                     isActive
                       ? "border-primary bg-primary text-primary-content font-medium"
@@ -48,7 +95,7 @@ export default function DpiPage() {
                   }`}
                 >
                   <div className="text-xs opacity-80">Stage {stage.id}</div>
-                  <div className="text-sm font-semibold font-mono mt-0.5">
+                  <div className="text-sm font-semibold  mt-0.5">
                     {stage.dpi}
                   </div>
                 </button>
@@ -62,7 +109,7 @@ export default function DpiPage() {
             <label className="text-sm font-medium">
               Stage {activeStageId} Sensitivity
             </label>
-            <div className="flex items-center gap-1 font-mono text-sm">
+            <div className="flex items-center gap-1  text-sm">
               <input
                 type="number"
                 min="100"
@@ -74,7 +121,7 @@ export default function DpiPage() {
                   if (!isNaN(val))
                     handleDpiChange(Math.min(16000, Math.max(100, val)));
                 }}
-                className="input input-bordered input-sm w-20 text-center font-mono"
+                className="input input-bordered input-sm w-20 text-center "
               />
               <span className="text-xs text-base-content/60">DPI</span>
             </div>
@@ -100,7 +147,7 @@ export default function DpiPage() {
               <button
                 key={preset}
                 onClick={() => handleDpiChange(preset)}
-                className={`btn btn-xs font-mono ${
+                className={`btn btn-xs  ${
                   activeStage.dpi === preset
                     ? "btn-neutral"
                     : "btn-ghost border border-base-300"

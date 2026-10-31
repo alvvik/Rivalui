@@ -93,7 +93,7 @@ export default function Home() {
             Battery Status
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-base font-semibold font-mono">
+            <span className="text-base font-semibold ">
               {loading ? "..." : `${deviceData.batteryLevel}%`}
             </span>
             <span className="text-xs text-emerald-500 font-medium">
@@ -112,7 +112,7 @@ export default function Home() {
           <div className="text-xs font-medium text-base-content/50 uppercase tracking-wider">
             Sensitivity
           </div>
-          <div className="text-base font-semibold font-mono">
+          <div className="text-base font-semibold ">
             {loading ? "..." : `${deviceData.currentDpi} DPI`}
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function Home() {
           <div className="text-xs font-medium text-base-content/50 uppercase tracking-wider">
             Polling Rate
           </div>
-          <div className="text-base font-semibold font-mono">
+          <div className="text-base font-semibold ">
             {loading ? "..." : deviceData.pollingRate}
           </div>
         </div>
