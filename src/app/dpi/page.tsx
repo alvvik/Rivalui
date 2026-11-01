@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 
 interface DpiStage {
   id: number;
@@ -18,6 +19,7 @@ export default function DpiPage() {
   const [mounted, setMounted] = useState(false);
   const [stages, setStages] = useState<DpiStage[]>(DEFAULT_STAGES);
   const [activeStageId, setActiveStageId] = useState<number>(2);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -41,7 +43,8 @@ export default function DpiPage() {
 
   const activeStage = stages.find((s) => s.id === activeStageId) || stages[1];
 
-  const handleDpiChange = (newDpi: number) => {
+  const handleDpiChange = async (newDpi: number) => {
+    setErrorMsg(null);
     const updated = stages.map((s) => (s.id === activeStageId ? { ...s, dpi: newDpi } : s));
     setStages(updated);
     try {
@@ -49,15 +52,34 @@ export default function DpiPage() {
     } catch (e) {
       console.error("Failed to save to localStorage", e);
     }
-    // call
+    try {
+      await invoke("set_sensitivity", { sensitivity: newDpi.toString() });
+    } catch (err) {
+      console.error("Failed to set sensitivity on backend:", err);
+      const errStr = typeof err === "string" ? err : JSON.stringify(err);
+      setErrorMsg(errStr);
+      alert("Backend error (DPI change): " + errStr);
+    }
   };
 
-  const handleStageSelect = (id: number) => {
+  const handleStageSelect = async (id: number) => {
+    setErrorMsg(null);
     setActiveStageId(id);
     try {
       localStorage.setItem("current_stage", id.toString());
     } catch (e) {
       console.error("Failed to save to localStorage", e);
+    }
+    const stage = stages.find((s) => s.id === id);
+    if (stage) {
+      try {
+        await invoke("set_sensitivity", { sensitivity: stage.dpi.toString() });
+      } catch (err) {
+        console.error("Failed to set sensitivity on backend:", err);
+        const errStr = typeof err === "string" ? err : JSON.stringify(err);
+        setErrorMsg(errStr);
+        alert("Backend error (Stage select): " + errStr);
+      }
     }
   };
 
@@ -73,6 +95,12 @@ export default function DpiPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-10 select-none">
       <h1 className="px-1 text-lg font-medium">Change dpi</h1>
+
+      {errorMsg && (
+        <div className="alert alert-error text-sm">
+          <span>Error setting DPI: {errorMsg}</span>
+        </div>
+      )}
 
       <div className="border-base-300 bg-base-100 space-y-6 rounded-lg border p-6">
         <div className="space-y-3">
@@ -137,15 +165,14 @@ export default function DpiPage() {
           </label>
           <div className="flex flex-wrap gap-1.5">
             {[400, 800, 1200, 1600, 2400, 3200, 6400, 12800].map((preset) => (
-              <button
+              <div
                 key={preset}
-                onClick={() => handleDpiChange(preset)}
-                className={`btn btn-xs ${
+                className={`btn btn-xs cursor-default pointer-events-none ${
                   activeStage.dpi === preset ? "btn-neutral" : "btn-ghost border-base-300 border"
                 }`}
               >
                 {preset}
-              </button>
+              </div>
             ))}
           </div>
         </div>

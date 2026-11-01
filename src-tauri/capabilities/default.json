@@ -17,6 +17,11 @@
           "name": "python3"
         },
         {
+          "cmd": "/usr/bin/python3",
+          "args": true,
+          "name": "python3_abs"
+        },
+        {
           "cmd": "rivalcfg",
           "args": true,
           "name": "rivalcfg"
