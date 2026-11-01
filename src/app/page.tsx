@@ -7,6 +7,7 @@ import { listen } from "@tauri-apps/api/event";
 interface DeviceData {
   mouseName: string;
   batteryLevel: number;
+  isCharging: boolean;
   currentDpi: string | number;
   pollingRate: string;
 }
@@ -15,6 +16,7 @@ export default function Home() {
   const [deviceData, setDeviceData] = useState<DeviceData>({
     mouseName: "SteelSeries Rival 650 Wireless",
     batteryLevel: 88,
+    isCharging: false,
     currentDpi: 1600,
     pollingRate: "1000 Hz",
   });
@@ -27,6 +29,7 @@ export default function Home() {
         if (
           prev.mouseName === data.mouseName &&
           prev.batteryLevel === data.batteryLevel &&
+          prev.isCharging === data.isCharging &&
           prev.currentDpi === data.currentDpi &&
           prev.pollingRate === data.pollingRate
         ) {
@@ -35,6 +38,7 @@ export default function Home() {
         return {
           mouseName: data.mouseName || "SteelSeries Rival 650 Wireless",
           batteryLevel: data.batteryLevel ?? 88,
+          isCharging: data.isCharging ?? false,
           currentDpi: data.currentDpi || 1600,
           pollingRate: data.pollingRate || "1000 Hz",
         };
@@ -96,11 +100,19 @@ export default function Home() {
             <span className="text-base font-semibold">
               {loading ? "..." : `${deviceData.batteryLevel}%`}
             </span>
-            <span className="text-xs font-medium text-emerald-500">Connected</span>
+            <span
+              className={`text-xs font-medium ${
+                deviceData.isCharging ? "text-amber-500" : "text-emerald-500"
+              }`}
+            >
+              {deviceData.isCharging ? "Charging" : "Connected"}
+            </span>
           </div>
           <div className="bg-base-300 h-1.5 w-full overflow-hidden rounded-full">
             <div
-              className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+              className={`h-full rounded-full transition-all duration-500 ${
+                deviceData.isCharging ? "bg-amber-500" : "bg-emerald-500"
+              }`}
               style={{ width: `${loading ? 0 : deviceData.batteryLevel}%` }}
             ></div>
           </div>

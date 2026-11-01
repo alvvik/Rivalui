@@ -14,17 +14,26 @@ def get_info():
             pass
 
         battery_level = 50
-        for attempt in range(3):
-            try:
-                res = subprocess.run(['rivalcfg', '--battery-level'], capture_output=True, text=True, timeout=3)
-                if res.returncode == 0 and "Unable to get" not in res.stdout:
-                    match = re.search(r'(\d+)\s*%', res.stdout)
-                    if match:
-                        battery_level = int(match.group(1))
-                        break
-            except Exception:
-                pass
-            time.sleep(0.5)
+        is_charging = False
+        try:
+            bat = getattr(mouse, 'battery', None)
+            if bat and isinstance(bat, dict):
+                battery_level = bat.get('level', 50)
+                is_charging = bat.get('is_charging', False)
+            else:
+                for attempt in range(3):
+                    try:
+                        res = subprocess.run(['rivalcfg', '--battery-level'], capture_output=True, text=True, timeout=3)
+                        if res.returncode == 0 and "Unable to get" not in res.stdout:
+                            match = re.search(r'(\d+)\s*%', res.stdout)
+                            if match:
+                                battery_level = int(match.group(1))
+                                break
+                    except Exception:
+                        pass
+                    time.sleep(0.5)
+        except Exception:
+            pass
 
         active_dpi = "1600"
         try:
@@ -50,6 +59,7 @@ def get_info():
         data = {
             'mouseName': getattr(mouse, 'name', 'SteelSeries Aerox 3 Wireless'),
             'batteryLevel': battery_level,
+            'isCharging': is_charging,
             'currentDpi': str(active_dpi),
             'pollingRate': polling_rate,
         }
@@ -59,6 +69,7 @@ def get_info():
         data = {
             'mouseName': 'SteelSeries Aerox 3 Wireless',
             'batteryLevel': 50,
+            'isCharging': False,
             'currentDpi': '1600',
             'pollingRate': '1000 Hz',
         }

@@ -26,14 +26,13 @@ async fn run_python(app: &tauri::AppHandle) -> Result<String, String> {
 
     let output = match res {
         Ok(out) if out.status.success() => out,
-        _ => {
-            app.shell()
-                .command("python3")
-                .args(full_args)
-                .output()
-                .await
-                .map_err(|e| e.to_string())?
-        }
+        _ => app
+            .shell()
+            .command("python3")
+            .args(full_args)
+            .output()
+            .await
+            .map_err(|e| e.to_string())?,
     };
 
     if output.status.success() {
