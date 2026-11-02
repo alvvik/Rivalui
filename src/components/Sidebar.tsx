@@ -1,5 +1,5 @@
 "use client";
-import { Gauge, House } from "lucide-react";
+import { Activity, Gauge, House } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -15,6 +15,12 @@ const items = [
     icon: <Gauge className="size-5 shrink-0" />,
     label: "DPI",
     href: "/dpi",
+  },
+  {
+    id: 2,
+    icon: <Activity className="size-5 shrink-0" />,
+    label: "Polling Rate",
+    href: "/polling-rate",
   },
 ];
 
