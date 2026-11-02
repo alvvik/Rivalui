@@ -1,7 +1,6 @@
+use std::process::Command;
 use std::time::Duration;
 use tauri::{Emitter, Manager};
-use tauri_plugin_shell::ShellExt;
-
 async fn run_python(app: &tauri::AppHandle) -> Result<String, String> {
     let resource_path = app
         .path()
@@ -17,19 +16,19 @@ async fn run_python(app: &tauri::AppHandle) -> Result<String, String> {
 
     let full_args = vec!["-I", script_path.to_str().unwrap()];
 
-    let res = app
-        .shell()
-        .command("/usr/bin/python3")
+    let res = tokio::process::Command::new("/usr/bin/python3")
         .args(full_args.clone())
+        .env_remove("PYTHONHOME")
+        .env_remove("PYTHONPATH")
         .output()
         .await;
 
     let output = match res {
         Ok(out) if out.status.success() => out,
-        _ => app
-            .shell()
-            .command("python3")
+        _ => tokio::process::Command::new("python3")
             .args(full_args)
+            .env_remove("PYTHONHOME")
+            .env_remove("PYTHONPATH")
             .output()
             .await
             .map_err(|e| e.to_string())?,
@@ -48,13 +47,12 @@ async fn get_mouse_info(app: tauri::AppHandle) -> Result<String, String> {
 }
 
 #[tauri::command]
-async fn set_sensitivity(app: tauri::AppHandle, sensitivity: String) -> Result<String, String> {
-    let output = app
-        .shell()
-        .command("rivalcfg")
+async fn set_sensitivity(sensitivity: String) -> Result<String, String> {
+    let output = Command::new("rivalcfg")
         .args(["-s", &sensitivity])
+        .env_remove("PYTHONHOME")
+        .env_remove("PYTHONPATH")
         .output()
-        .await
         .map_err(|e| e.to_string())?;
 
     if output.status.success() {
@@ -65,11 +63,11 @@ async fn set_sensitivity(app: tauri::AppHandle, sensitivity: String) -> Result<S
 }
 
 #[tauri::command]
-async fn set_polling_rate(app: tauri::AppHandle, polling_rate: String) -> Result<String, String> {
-    let output = app
-        .shell()
-        .command("rivalcfg")
+async fn set_polling_rate(polling_rate: String) -> Result<String, String> {
+    let output = tokio::process::Command::new("rivalcfg")
         .args(["-p", &polling_rate])
+        .env_remove("PYTHONHOME")
+        .env_remove("PYTHONPATH")
         .output()
         .await
         .map_err(|e| e.to_string())?;
