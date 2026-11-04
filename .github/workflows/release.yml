@@ -4,12 +4,14 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*"
 
 jobs:
   release:
     permissions:
       contents: write
-    runs-on: ubuntu-22_04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -40,3 +42,39 @@ jobs:
           releaseBody: "Auto build of the Linux app for version __VERSION__"
           releaseDraft: false
           prerelease: false
+
+  release-arch:
+    name: Release (Arch Linux Pacman)
+    needs: release
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    container: archlinux:base-devel
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies (Arch Linux)
+        run: |
+          pacman -Syu --noconfirm base-devel curl wget git webkit2gtk-4.1 nodejs npm rustup python
+          rustup default stable
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Create non-root user for makepkg and build
+        run: |
+          useradd -m builder
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+          chown -R builder:builder ${{ github.workspace }}
+          chmod +x ./arch/build-arch.sh
+
+          sudo -u builder ./arch/build-arch.sh
+
+      - name: Upload Arch Package to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: pkg/*.pkg.tar.zst
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

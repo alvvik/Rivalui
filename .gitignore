@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Arch packaging
+/arch/build/
+/pkg/
+*.pkg.tar.zst
+*.pkg.tar.xz
+
