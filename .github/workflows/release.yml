@@ -55,8 +55,7 @@ jobs:
 
       - name: Install system dependencies (Arch Linux)
         run: |
-          pacman -Syu --noconfirm base-devel curl wget git webkit2gtk-4.1 nodejs npm rustup python
-          rustup default stable
+          pacman -Syu --noconfirm base-devel curl wget git webkit2gtk-4.1 nodejs npm rust python
 
       - name: Install frontend dependencies
         run: npm install

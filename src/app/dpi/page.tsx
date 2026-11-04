@@ -167,7 +167,7 @@ export default function DpiPage() {
             {[400, 800, 1200, 1600, 2400, 3200, 6400, 12800].map((preset) => (
               <div
                 key={preset}
-                className={`btn btn-xs cursor-default pointer-events-none ${
+                className={`btn btn-xs pointer-events-none cursor-default ${
                   activeStage.dpi === preset ? "btn-neutral" : "btn-ghost border-base-300 border"
                 }`}
               >
