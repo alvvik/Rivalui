@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -u
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/rivalui"
+CONFIG_FILE="$CONFIG_DIR/colors.conf"
+LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/rivalui-color.lock"
+
+mkdir -p "$CONFIG_DIR"
+
+if [[ ! -f "$CONFIG_FILE" ]]; then
+    printf 'TOP_COLOR=ff0000\nMIDDLE_COLOR=ff0000\nBOTTOM_COLOR=ff0000\n' > "$CONFIG_FILE"
+fi
+
+exec 200>"$LOCK_FILE"
+flock -n 200 || exit 1
+
+read_color() {
+    local key="$1"
+    local value
+    value=$(awk -F= -v key="$key" '$1 == key { print $2; exit }' "$CONFIG_FILE")
+    value="${value#\#}"
+
+    if [[ "$value" =~ ^[[:xdigit:]]{6}$ ]]; then
+        printf '%s' "$value"
+    fi
+}
+
+apply_color() {
+    local args=()
+    local color
+
+    color=$(read_color TOP_COLOR)
+    [[ -n "$color" ]] && args+=(--top-color "$color")
+    color=$(read_color MIDDLE_COLOR)
+    [[ -n "$color" ]] && args+=(--middle-color "$color")
+    color=$(read_color BOTTOM_COLOR)
+    [[ -n "$color" ]] && args+=(--bottom-color "$color")
+
+    if (( ${#args[@]} > 0 )); then
+        rivalcfg "${args[@]}" >/dev/null 2>&1 || true
+    fi
+}
+
+apply_color
+
+while true; do
+    inotifywait -qq -t 60 -e close_write,move,create,delete "$CONFIG_DIR" >/dev/null 2>&1 || true
+    apply_color
+done

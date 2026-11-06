@@ -5,7 +5,7 @@ pkgdesc="RivalUI Tauri Application"
 arch=('x86_64')
 url="https://github.com/alvv/RivalUI"
 license=('MIT')
-depends=('webkit2gtk-4.1' 'gtk3' 'glib2' 'python' 'rivalcfg' 'hicolor-icon-theme')
+depends=('webkit2gtk-4.1' 'gtk3' 'glib2' 'python' 'rivalcfg' 'hicolor-icon-theme' 'inotify-tools' 'usbutils')
 optdepends=('python-pip: for python modules support')
 source=('rivalui.tar.gz')
 sha256sums=('SKIP')
@@ -34,4 +34,16 @@ package() {
   if [ -d "usr/share/icons" ]; then
     cp -r usr/share/icons "$pkgdir/usr/share/"
   fi
+
+  install -Dm755 usr/bin/rivalui-color-service "$pkgdir/usr/bin/rivalui-color-service"
+  install -Dm644 usr/lib/systemd/user/rivalui-color.service \
+    "$pkgdir/usr/lib/systemd/user/rivalui-color.service"
+}
+
+post_install() {
+  systemctl --global enable rivalui-color.service >/dev/null 2>&1 || true
+}
+
+post_upgrade() {
+  systemctl --global enable rivalui-color.service >/dev/null 2>&1 || true
 }

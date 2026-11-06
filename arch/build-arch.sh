@@ -16,6 +16,8 @@ rm -rf "$ARCH_BUILD_DIR"
 mkdir -p "$ARCH_BUILD_DIR"
 
 cp -r "$DEB_DIR/data/usr" "$ARCH_BUILD_DIR/"
+install -Dm755 arch/rivalui-color-service "$ARCH_BUILD_DIR/usr/bin/rivalui-color-service"
+install -Dm644 arch/rivalui-color.service "$ARCH_BUILD_DIR/usr/lib/systemd/user/rivalui-color.service"
 
 cd "$ARCH_BUILD_DIR"
 tar -czf rivalui.tar.gz usr/

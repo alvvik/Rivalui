@@ -1,0 +1,12 @@
+[Unit]
+Description=RivalUI mouse colour service
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rivalui-color-service
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
