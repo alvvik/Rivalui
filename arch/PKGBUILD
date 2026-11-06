@@ -5,8 +5,8 @@ pkgdesc="RivalUI Tauri Application"
 arch=('x86_64')
 url="https://github.com/alvv/RivalUI"
 license=('MIT')
-depends=('webkit2gtk-4.1' 'gtk3' 'glib2' 'python' 'rivalcfg' 'hicolor-icon-theme' 'inotify-tools' 'usbutils')
-optdepends=('python-pip: for python modules support')
+depends=('webkit2gtk-4.1' 'gtk3' 'glib2' 'python' 'hicolor-icon-theme' 'inotify-tools' 'usbutils')
+optdepends=('python-pip: for python modules support', 'rivalcfg: for SteelSeries mouse configuration')
 source=('rivalui.tar.gz')
 sha256sums=('SKIP')
 
@@ -42,6 +42,11 @@ package() {
 
 post_install() {
   systemctl --global enable rivalui-color.service >/dev/null 2>&1 || true
+  echo ""
+  echo "==> Note: rivalcfg is required for mouse configuration."
+  echo "==> Install it with: pip install rivalcfg"
+  echo "==> You may also need to set up udev rules:"
+  echo "==> https://github.com/flozz/rivalcfg#setting-up-udev-rules"
 }
 
 post_upgrade() {

@@ -6,9 +6,9 @@ import { invoke } from "@tauri-apps/api/core";
 type ZoneId = "top" | "middle" | "bottom";
 
 const zones: { id: ZoneId; label: string; description: string }[] = [
-  { id: "top", label: "Top", description: "Górna strefa" },
-  { id: "middle", label: "Middle", description: "Środkowa strefa" },
-  { id: "bottom", label: "Bottom", description: "Dolna strefa" },
+  { id: "top", label: "Top", description: "Top zone" },
+  { id: "middle", label: "Middle", description: "Middle zone" },
+  { id: "bottom", label: "Bottom", description: "Bottom zone" },
 ];
 
 const defaultZones: Record<ZoneId, boolean> = {
@@ -55,12 +55,12 @@ export default function ColoursPage() {
 
   const applyColor = async () => {
     if (!isValidHex(color)) {
-      setErrorMsg("Wpisz poprawny kolor HEX, np. #ff0000.");
+      setErrorMsg("Enter a valid HEX color, e.g. #ff0000.");
       return;
     }
 
     if (!Object.values(selectedZones).some(Boolean)) {
-      setErrorMsg("Zaznacz co najmniej jedną strefę.");
+      setErrorMsg("Select at least one zone.");
       return;
     }
 
@@ -89,7 +89,7 @@ export default function ColoursPage() {
     <div className="mx-auto max-w-2xl space-y-6 py-10 select-none">
       <div>
         <h1 className="px-1 text-lg font-medium">Colours</h1>
-        <p className="text-base-content/60 px-1 pt-1 text-sm">Ustaw kolor podświetlenia myszy.</p>
+        <p className="text-base-content/60 px-1 pt-1 text-sm">Set mouse backlight color.</p>
       </div>
 
       {errorMsg && (
@@ -99,7 +99,7 @@ export default function ColoursPage() {
       )}
       {saved && (
         <div className="alert alert-success text-sm" role="status">
-          <span>Kolor został zastosowany.</span>
+          <span>Color has been applied.</span>
         </div>
       )}
 
@@ -108,10 +108,10 @@ export default function ColoursPage() {
           <label
             className="ring-base-300 relative size-28 shrink-0 cursor-pointer overflow-hidden rounded-full border-4 border-white shadow-lg ring-1"
             style={{ backgroundColor: isValidHex(color) ? color : "transparent" }}
-            title="Wybierz kolor"
+            title="Choose color"
           >
             <input
-              aria-label="Wybierz kolor"
+              aria-label="Choose color"
               type="color"
               value={isValidHex(color) ? color : "#000000"}
               onChange={(event) => updateColor(event.target.value)}
@@ -124,7 +124,7 @@ export default function ColoursPage() {
               htmlFor="hex-color"
               className="text-base-content/60 text-xs font-medium tracking-wider uppercase"
             >
-              Kolor HEX
+              HEX Color
             </label>
             <input
               id="hex-color"
@@ -135,17 +135,19 @@ export default function ColoursPage() {
               onBlur={() => {
                 if (!color.startsWith("#")) updateColor(`#${color}`);
               }}
-              className={`input input-bordered w-full font-mono uppercase ${!isValidHex(color) ? "input-error" : ""}`}
+              className={`input input-bordered w-full uppercase ${!isValidHex(color) ? "input-error" : ""}`}
               placeholder="#ff0000"
               spellCheck={false}
             />
-            <p className="text-base-content/50 text-xs">Kliknij koło albo wpisz wartość ręcznie.</p>
+            <p className="text-base-content/50 text-xs">
+              Click the circle or enter value manually.
+            </p>
           </div>
         </div>
 
         <div className="border-base-200 space-y-3 border-t pt-5">
           <label className="text-base-content/60 text-xs font-medium tracking-wider uppercase">
-            Zastosuj do stref
+            Apply to zones
           </label>
           <div className="grid gap-2 sm:grid-cols-3">
             {zones.map((zone) => (
@@ -178,7 +180,7 @@ export default function ColoursPage() {
           disabled={loading}
           className="btn btn-primary w-full"
         >
-          {loading ? <span className="loading loading-spinner loading-sm" /> : "Zastosuj kolor"}
+          {loading ? <span className="loading loading-spinner loading-sm" /> : "Apply color"}
         </button>
       </div>
     </div>

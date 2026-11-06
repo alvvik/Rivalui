@@ -5,19 +5,19 @@ echo "building for Arch Linux "
 
 npm run tauri build
 
-DEB_DIR=$(find src-tauri/target/release/bundle/deb -maxdepth 1 -type d -name "*_amd64" | head -n 1)
+DEB_DIR=$(find ../src-tauri/target/release/bundle/deb -maxdepth 1 -type d -name "*_amd64" | head -n 1)
 if [ -z "$DEB_DIR" ]; then
   echo "Error: DEB bundle directory not found!"
   exit 1
 fi
 
-ARCH_BUILD_DIR="arch/build"
+ARCH_BUILD_DIR="build"
 rm -rf "$ARCH_BUILD_DIR"
 mkdir -p "$ARCH_BUILD_DIR"
 
 cp -r "$DEB_DIR/data/usr" "$ARCH_BUILD_DIR/"
-install -Dm755 arch/rivalui-color-service "$ARCH_BUILD_DIR/usr/bin/rivalui-color-service"
-install -Dm644 arch/rivalui-color.service "$ARCH_BUILD_DIR/usr/lib/systemd/user/rivalui-color.service"
+install -Dm755 rivalui-color-service "$ARCH_BUILD_DIR/usr/bin/rivalui-color-service"
+install -Dm644 rivalui-color.service "$ARCH_BUILD_DIR/usr/lib/systemd/user/rivalui-color.service"
 
 cd "$ARCH_BUILD_DIR"
 tar -czf rivalui.tar.gz usr/
