@@ -13,20 +13,16 @@ interface DeviceData {
 }
 
 export default function Home() {
-  const [deviceData, setDeviceData] = useState<DeviceData>({
-    mouseName: "SteelSeries Rival 650 Wireless",
-    batteryLevel: 88,
-    isCharging: false,
-    currentDpi: 1600,
-    pollingRate: "1000 Hz",
-  });
+  const [deviceData, setDeviceData] = useState<DeviceData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const parseAndSetData = useCallback((jsonStr: string) => {
     try {
       const data = JSON.parse(jsonStr);
       setDeviceData((prev) => {
         if (
+          prev &&
           prev.mouseName === data.mouseName &&
           prev.batteryLevel === data.batteryLevel &&
           prev.isCharging === data.isCharging &&
@@ -43,8 +39,10 @@ export default function Home() {
           pollingRate: data.pollingRate || "1000 Hz",
         };
       });
+      setError(null);
     } catch (err) {
       console.error("Failed to parse device info JSON:", err);
+      setError(typeof err === "string" ? err : "Failed to parse device data");
     } finally {
       setLoading(false);
     }
@@ -55,6 +53,7 @@ export default function Home() {
       .then((jsonStr) => parseAndSetData(jsonStr))
       .catch((err) => {
         console.error("Failed to fetch on mount:", err);
+        setError(typeof err === "string" ? err : "Failed to fetch device info");
         setLoading(false);
       });
 
@@ -78,6 +77,12 @@ export default function Home() {
     <div className="mx-auto max-w-4xl space-y-6 py-10 select-none">
       <h1 className="px-1 text-lg font-medium">Device Information</h1>
 
+      {error && (
+        <div className="alert alert-error text-sm" role="alert">
+          <span>{error}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="border-base-300 bg-base-100 space-y-2 rounded-xl border p-5">
           <div className="text-base-content/50 text-xs font-medium tracking-wider uppercase">
@@ -86,8 +91,10 @@ export default function Home() {
           <div className="text-base font-semibold">
             {loading ? (
               <span className="loading loading-spinner loading-xs"></span>
-            ) : (
+            ) : deviceData ? (
               deviceData.mouseName
+            ) : (
+              "No device detected"
             )}
           </div>
         </div>
@@ -98,22 +105,22 @@ export default function Home() {
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-base font-semibold">
-              {loading ? "..." : `${deviceData.batteryLevel}%`}
+              {loading ? "..." : deviceData ? `${deviceData.batteryLevel}%` : "N/A"}
             </span>
             <span
               className={`text-xs font-medium ${
-                deviceData.isCharging ? "text-amber-500" : "text-emerald-500"
+                deviceData?.isCharging ? "text-amber-500" : "text-emerald-500"
               }`}
             >
-              {deviceData.isCharging ? "Charging" : "Connected"}
+              {deviceData?.isCharging ? "Charging" : "Connected"}
             </span>
           </div>
           <div className="bg-base-300 h-1.5 w-full overflow-hidden rounded-full">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
-                deviceData.isCharging ? "bg-amber-500" : "bg-emerald-500"
+                deviceData?.isCharging ? "bg-amber-500" : "bg-emerald-500"
               }`}
-              style={{ width: `${loading ? 0 : deviceData.batteryLevel}%` }}
+              style={{ width: `${loading ? 0 : (deviceData?.batteryLevel ?? 0)}%` }}
             ></div>
           </div>
         </div>
@@ -123,7 +130,7 @@ export default function Home() {
             Sensitivity
           </div>
           <div className="text-base font-semibold">
-            {loading ? "..." : `${deviceData.currentDpi} DPI`}
+            {loading ? "..." : deviceData ? `${deviceData.currentDpi} DPI` : "N/A"}
           </div>
         </div>
 
@@ -131,7 +138,9 @@ export default function Home() {
           <div className="text-base-content/50 text-xs font-medium tracking-wider uppercase">
             Polling Rate
           </div>
-          <div className="text-base font-semibold">{loading ? "..." : deviceData.pollingRate}</div>
+          <div className="text-base font-semibold">
+            {loading ? "..." : (deviceData?.pollingRate ?? "N/A")}
+          </div>
         </div>
       </div>
     </div>

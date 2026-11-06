@@ -115,17 +115,18 @@ fn start_color_service() -> Result<(), String> {
     Ok(())
 }
 async fn run_python(app: &tauri::AppHandle) -> Result<String, String> {
-    let resource_path = app
+    let script_path = app
         .path()
         .resource_dir()
         .map(|p| p.join("python/mouse_bridge.py"))
-        .unwrap_or_else(|_| std::path::PathBuf::from("src-tauri/python/mouse_bridge.py"));
-
-    let script_path = if resource_path.exists() {
-        resource_path
-    } else {
-        std::path::PathBuf::from("src-tauri/python/mouse_bridge.py")
-    };
+        .ok()
+        .filter(|p| p.exists())
+        .or_else(|| {
+            std::path::PathBuf::from("/usr/lib/rivalui/python/mouse_bridge.py")
+                .exists()
+                .then_some(std::path::PathBuf::from("/usr/lib/rivalui/python/mouse_bridge.py"))
+        })
+        .unwrap_or_else(|| std::path::PathBuf::from("src-tauri/python/mouse_bridge.py"));
 
     let full_args = vec!["-I", script_path.to_str().unwrap()];
 
@@ -138,13 +139,29 @@ async fn run_python(app: &tauri::AppHandle) -> Result<String, String> {
 
     let output = match res {
         Ok(out) if out.status.success() => out,
-        _ => tokio::process::Command::new("python3")
-            .args(full_args)
-            .env_remove("PYTHONHOME")
-            .env_remove("PYTHONPATH")
-            .output()
-            .await
-            .map_err(|e| e.to_string())?,
+        Ok(out) => {
+            let stderr = String::from_utf8_lossy(&out.stderr);
+            let stdout = String::from_utf8_lossy(&out.stdout);
+            return Err(format!("Python script failed: stdout={}, stderr={}", stdout, stderr));
+        }
+        Err(e) => {
+            let fallback = tokio::process::Command::new("python3")
+                .args(full_args)
+                .env_remove("PYTHONHOME")
+                .env_remove("PYTHONPATH")
+                .output()
+                .await;
+
+            match fallback {
+                Ok(out) if out.status.success() => out,
+                Ok(out) => {
+                    let stderr = String::from_utf8_lossy(&out.stderr);
+                    let stdout = String::from_utf8_lossy(&out.stdout);
+                    return Err(format!("Python script failed (fallback): stdout={}, stderr={}", stdout, stderr));
+                }
+                Err(e) => return Err(format!("Failed to run python3: {}", e)),
+            }
+        }
     };
 
     if output.status.success() {

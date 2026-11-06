@@ -3,6 +3,8 @@ set -e
 
 echo "building for Arch Linux "
 
+rm -rf ../src-tauri/target/release/bundle
+
 npm run tauri build
 
 DEB_DIR=$(find ../src-tauri/target/release/bundle/deb -maxdepth 1 -type d -name "*_amd64" | head -n 1)
