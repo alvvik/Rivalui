@@ -94,7 +94,10 @@ export default function DpiPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-10 select-none">
-      <h1 className="px-1 text-lg font-medium">Change dpi</h1>
+      <div>
+        <h1 className="px-1 text-lg font-medium">Change dpi</h1>
+        <p className="text-base-content/60 px-1 pt-1 text-sm">Set mouse sensitivity.</p>
+      </div>
 
       {errorMsg && (
         <div className="alert alert-error text-sm">

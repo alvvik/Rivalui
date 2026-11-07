@@ -1,5 +1,5 @@
 "use client";
-import { Activity, Gauge, House, Palette } from "lucide-react";
+import { Activity, Gauge, House, Info, Palette } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -27,6 +27,12 @@ const items = [
     icon: <Palette className="size-5 shrink-0" />,
     label: "Colours",
     href: "/colours",
+  },
+  {
+    id: 4,
+    icon: <Info className="size-5 shrink-0" />,
+    label: "About",
+    href: "/about",
   },
 ];
 
