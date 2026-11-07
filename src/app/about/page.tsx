@@ -46,13 +46,39 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        <div className="border-base-300 bg-base-100 space-y-3 rounded-xl border p-5">
+          <div className="text-base-content/50 text-xs font-medium tracking-wider uppercase">
+            Project Links
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <Link
+              href="https://github.com/alvvik/Rivalui"
+              className="bg-primary text-primary-content hover:bg-primary/90 focus-visible:outline-primary flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Source Code
+              <SquareArrowOutUpRight className="ml-auto h-3.5 w-3.5 opacity-70" />
+            </Link>
+
+            <Link
+              href="https://github.com/alvvik/Rivalui/issues"
+              className="bg-base-200 text-base-content hover:bg-base-300 focus-visible:outline-primary border-base-300 flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Report an Issue
+              <SquareArrowOutUpRight className="ml-auto h-3.5 w-3.5 opacity-70" />
+            </Link>
+          </div>
+        </div>
         <div className="border-base-300 bg-base-100 space-y-2 rounded-xl border p-5">
           <div className="text-base-content/50 text-xs font-medium tracking-wider uppercase">
             License
           </div>
           <div>
             <Link
-              href="https://github.com/alvvik/Rivalui/blob/main/LICENSE"
+              href="https://raw.githubusercontent.com/alvvik/Rivalui/refs/heads/main/LICENSE"
               className="bg-primary text-primary-content hover:bg-primary/90 focus-visible:outline-primary flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm"
               target="_blank"
               rel="noreferrer"
