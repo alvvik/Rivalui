@@ -139,7 +139,9 @@ export default function ColoursPage() {
               placeholder="#ff0000"
               spellCheck={false}
             />
-            <p className="text-base-content/50 text-xs">Click the circle or enter value manually.</p>
+            <p className="text-base-content/50 text-xs">
+              Click the circle or enter value manually.
+            </p>
           </div>
         </div>
 
