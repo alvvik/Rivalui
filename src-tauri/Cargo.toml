@@ -2,8 +2,8 @@
 name = "app"
 version = "0.1.0"
 description = "GUI application for rivalcfg"
-authors = ["you"]
-license = ""
+authors = ["alvvik"]
+license = "MIT"
 repository = ""
 edition = "2024"
 rust-version = "1.90"
