@@ -1,10 +1,10 @@
 [package]
-name = "app"
+name = "rivalui"
 version = "0.1.0"
 description = "GUI application for rivalcfg"
 authors = ["alvvik"]
 license = "MIT"
-repository = ""
+repository = "https://github.com/alvvik/rivalui"
 edition = "2024"
 rust-version = "1.90"
 

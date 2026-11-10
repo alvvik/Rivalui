@@ -36,7 +36,12 @@ The service runs in the background and monitors `~/.config/rivalui/colors.conf` 
 
 ## Screenshots
 
-SOON
+<p align="center">
+  <img src="screenshots/Homepage.png" alt="Homepage" width="24%" style="margin-right: 1%;" />
+  <img src="screenshots/dpi.png" alt="Change dpi" width="24%" style="margin-right: 1%;" />
+  <img src="screenshots/pollingrate.png" alt="Change pollingrate" width="24%" style="margin-right: 1%;" />
+  <img src="screenshots/colours.png" alt="Change colours" width="24%" />
+</p>
 
 ## Installation
 
@@ -44,9 +49,9 @@ SOON
 
 Grab the latest release for Linux from [**GitHub Releases**](https://github.com/alvvik/Rivalui/releases/latest):
 
-| Format                      |
-| --------------------------- |
-| `.AppImage`, `.deb`, `.rpm` |
+| Format                                  |
+| --------------------------------------- |
+| `.AppImage`, `.deb`, `.rpm`, `.tar.zst` |
 
 ### Prerequisites
 
