@@ -44,9 +44,9 @@ SOON
 
 Grab the latest release for Linux from [**GitHub Releases**](https://github.com/alvvik/Rivalui/releases/latest):
 
-| Format                      |
-| --------------------------- |
-| `.AppImage`, `.deb`, `.rpm` |
+| Format                                  |
+| --------------------------------------- |
+| `.AppImage`, `.deb`, `.rpm`, `.tar.zst` |
 
 ### Prerequisites
 
