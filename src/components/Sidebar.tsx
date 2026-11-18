@@ -34,6 +34,12 @@ const items = [
     label: "About",
     href: "/about",
   },
+  {
+    id: 5,
+    icon: <Info className="size-5 shrink-0" />,
+    label: "Reactive Colour",
+    href: "/reactive-colour",
+  },
 ];
 
 export default function Sidebar() {
