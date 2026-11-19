@@ -1,7 +1,7 @@
 import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
-export default function Home() {
+export default function About() {
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-10 select-none">
       <div>
