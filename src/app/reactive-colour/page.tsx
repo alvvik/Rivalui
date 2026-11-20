@@ -12,7 +12,7 @@ export default function ReactiveColour() {
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       try {
-        const savedColor = localStorage.getItem("mouse_color");
+        const savedColor = localStorage.getItem("reactiveColour");
         if (savedColor && isValidHex(savedColor)) setColor(savedColor);
       } catch (error) {
         console.error("Failed to load colour settings", error);
@@ -45,7 +45,7 @@ export default function ReactiveColour() {
         middleColor: color,
         bottomColor: color,
       });
-      localStorage.setItem("mouse_color", color);
+      localStorage.setItem("reactiveColour", color);
       setSaved(true);
     } catch (error) {
       console.error("Failed to set mouse colour:", error);
