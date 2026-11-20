@@ -218,6 +218,25 @@ async fn set_polling_rate(polling_rate: String) -> Result<String, String> {
 }
 
 #[tauri::command]
+async fn set_reactive_color(color: String) -> Result<String, String> {
+    let color =
+        normalize_color(Some(color))?.ok_or_else(|| "Select a reactive color".to_string())?;
+    let output = tokio::process::Command::new("rivalcfg")
+        .args(["--reactive-color", &color])
+        .env_remove("PYTHONHOME")
+        .env_remove("PYTHONPATH")
+        .output()
+        .await
+        .map_err(|error| error.to_string())?;
+
+    if output.status.success() {
+        Ok(String::from_utf8_lossy(&output.stdout).to_string())
+    } else {
+        Err(String::from_utf8_lossy(&output.stderr).to_string())
+    }
+}
+
+#[tauri::command]
 async fn set_mouse_colors(
     top_color: Option<String>,
     middle_color: Option<String>,
@@ -245,6 +264,7 @@ pub fn run() {
             get_mouse_info,
             set_sensitivity,
             set_polling_rate,
+            set_reactive_color,
             set_mouse_colors
         ])
         .setup(|app| {
