@@ -40,10 +40,8 @@ export default function ReactiveColour() {
     setSaved(false);
 
     try {
-      await invoke("set_mouse_colors", {
-        topColor: color,
-        middleColor: color,
-        bottomColor: color,
+      await invoke("set_reactive_color", {
+        color: color,
       });
       localStorage.setItem("reactiveColour", color);
       setSaved(true);
