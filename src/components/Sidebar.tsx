@@ -30,7 +30,7 @@ const items = [
   },
   {
     id: 4,
-    icon: <Info className="size-5 shrink-0" />,
+    icon: <Palette className="size-5 shrink-0" />,
     label: "Reactive Colour",
     href: "/reactive-colour",
   },
