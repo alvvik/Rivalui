@@ -30,6 +30,12 @@ const items = [
   },
   {
     id: 4,
+    icon: <Palette className="size-5 shrink-0" />,
+    label: "Reactive Colour",
+    href: "/reactive-colour",
+  },
+  {
+    id: 5,
     icon: <Info className="size-5 shrink-0" />,
     label: "About",
     href: "/about",

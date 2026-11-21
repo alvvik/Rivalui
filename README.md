@@ -20,11 +20,12 @@
 ## Features
 
 - **DPI Adjustment** — Smooth, precise sensitivity control with real-time preview
-- **RGB Backlight Control** — Full color picker for LED customization with persistent systemd service
+- **RGB Backlight Control** — Full colour picker for LED customization with persistent systemd service
 - **Polling Rate Selection** — Switch between polling rates for optimal responsiveness
 - **Device Info** — View battery status, firmware version, and hardware details at a glance
+- **Reactive colour Control** — Full colour picker for LED customization with persistent systemd service
 
-### Color Service
+### Colour Service
 
 RivalUI includes a systemd user service (`rivalui-color.service`) that automatically applies your RGB settings when:
 
@@ -32,7 +33,7 @@ RivalUI includes a systemd user service (`rivalui-color.service`) that automatic
 - The configuration file changes
 - The system boots (after graphical session)
 
-The service runs in the background and monitors `~/.config/rivalui/colors.conf` for changes, ensuring your mouse colors persist across reboots and device reconnections.
+The service runs in the background and monitors `~/.config/rivalui/colors.conf` for changes, ensuring your mouse colour persist across reboots and device reconnections.
 
 ## Screenshots
 
@@ -110,7 +111,7 @@ RivalUI/
 ├── arch/                 # Arch Linux package files
 │   ├── PKGBUILD          # Package build script
 │   ├── rivalui-color.service  # Systemd service unit
-│   └── rivalui-color-service  # Color service bash script
+│   └── rivalui-color-service  # Colour service bash script
 ├── public/               # Static assets
 ├── package.json          # Frontend dependencies & scripts
 └── .github/workflows/    # CI/CD (GitHub Actions)
