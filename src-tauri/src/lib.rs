@@ -44,10 +44,62 @@ fn normalize_color(color: Option<String>) -> Result<Option<String>, String> {
         .transpose()
 }
 
+fn parse_color_value(value: &str) -> Option<String> {
+    let normalized = value.trim().trim_start_matches('#').to_ascii_lowercase();
+    if normalized.len() == 6 && normalized.chars().all(|character| character.is_ascii_hexdigit()) {
+        Some(normalized)
+    } else {
+        None
+    }
+}
+
+fn read_color_config_values(
+    config_path: &PathBuf,
+) -> Result<(Option<String>, Option<String>, Option<String>, Option<String>), String> {
+    let contents = match fs::read_to_string(config_path) {
+        Ok(contents) => contents,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return Ok((
+                Some("ff0000".to_string()),
+                Some("ff0000".to_string()),
+                Some("ff0000".to_string()),
+                Some("ff0000".to_string()),
+            ));
+        }
+        Err(error) => return Err(error.to_string()),
+    };
+
+    let mut top_color = None;
+    let mut middle_color = None;
+    let mut bottom_color = None;
+    let mut reactive_color = None;
+
+    for line in contents.lines() {
+        let line = line.trim();
+        if line.is_empty() {
+            continue;
+        }
+        let Some((key, value)) = line.split_once('=') else {
+            continue;
+        };
+
+        match key.trim() {
+            "TOP_COLOR" => top_color = parse_color_value(value),
+            "MIDDLE_COLOR" => middle_color = parse_color_value(value),
+            "BOTTOM_COLOR" => bottom_color = parse_color_value(value),
+            "REACTIVE_COLOR" => reactive_color = parse_color_value(value),
+            _ => {}
+        }
+    }
+
+    Ok((top_color, middle_color, bottom_color, reactive_color))
+}
+
 fn write_color_config(
     top_color: Option<String>,
     middle_color: Option<String>,
     bottom_color: Option<String>,
+    reactive_color: Option<String>,
 ) -> Result<(), String> {
     let config_path = color_config_path()?;
     let config_dir = config_path
@@ -57,10 +109,11 @@ fn write_color_config(
 
     let temporary_path = config_path.with_extension("conf.tmp");
     let contents = format!(
-        "TOP_COLOR={}\nMIDDLE_COLOR={}\nBOTTOM_COLOR={}\n",
+        "TOP_COLOR={}\nMIDDLE_COLOR={}\nBOTTOM_COLOR={}\nREACTIVE_COLOR={}\n",
         top_color.unwrap_or_default(),
         middle_color.unwrap_or_default(),
-        bottom_color.unwrap_or_default()
+        bottom_color.unwrap_or_default(),
+        reactive_color.unwrap_or_default()
     );
     fs::write(&temporary_path, contents).map_err(|error| error.to_string())?;
     fs::rename(temporary_path, config_path).map_err(|error| error.to_string())
@@ -221,6 +274,8 @@ async fn set_polling_rate(polling_rate: String) -> Result<String, String> {
 async fn set_reactive_color(color: String) -> Result<String, String> {
     let color =
         normalize_color(Some(color))?.ok_or_else(|| "Select a reactive color".to_string())?;
+
+    // Apply immediately for instant feedback in the UI.
     let output = tokio::process::Command::new("rivalcfg")
         .args(["--reactive-color", &color])
         .env_remove("PYTHONHOME")
@@ -229,11 +284,18 @@ async fn set_reactive_color(color: String) -> Result<String, String> {
         .await
         .map_err(|error| error.to_string())?;
 
-    if output.status.success() {
-        Ok(String::from_utf8_lossy(&output.stdout).to_string())
-    } else {
-        Err(String::from_utf8_lossy(&output.stderr).to_string())
+    if !output.status.success() {
+        return Err(String::from_utf8_lossy(&output.stderr).to_string());
     }
+
+    // Persist so systemd user service can re-apply it after PC login.
+    let config_path = color_config_path()?;
+    let (top_color, middle_color, bottom_color, _) = read_color_config_values(&config_path)?;
+
+    write_color_config(top_color, middle_color, bottom_color, Some(color))?;
+    start_color_service()?;
+
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
 #[tauri::command]
@@ -251,7 +313,10 @@ async fn set_mouse_colors(
         return Err("Select at least one mouse zone".to_string());
     }
 
-    write_color_config(colors.0, colors.1, colors.2)?;
+    let config_path = color_config_path()?;
+    let (_, _, _, reactive_color) = read_color_config_values(&config_path)?;
+
+    write_color_config(colors.0, colors.1, colors.2, reactive_color)?;
     start_color_service()?;
     Ok("Color configuration saved".to_string())
 }

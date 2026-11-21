@@ -9,7 +9,7 @@ LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/rivalui-color.lock"
 mkdir -p "$CONFIG_DIR"
 
 if [[ ! -f "$CONFIG_FILE" ]]; then
-    printf 'TOP_COLOR=ff0000\nMIDDLE_COLOR=ff0000\nBOTTOM_COLOR=ff0000\n' > "$CONFIG_FILE"
+    printf 'TOP_COLOR=ff0000\nMIDDLE_COLOR=ff0000\nBOTTOM_COLOR=ff0000\nREACTIVE_COLOR=ff0000\n' > "$CONFIG_FILE"
 fi
 
 exec 200>"$LOCK_FILE"
@@ -24,6 +24,12 @@ read_color() {
     if [[ "$value" =~ ^[[:xdigit:]]{6}$ ]]; then
         printf '%s' "$value"
     fi
+}
+
+apply_reactive_color() {
+    local reactive
+    reactive=$(read_color REACTIVE_COLOR)
+    [[ -n "$reactive" ]] && rivalcfg --reactive-color "$reactive" >/dev/null 2>&1 || true
 }
 
 apply_color() {
@@ -43,8 +49,10 @@ apply_color() {
 }
 
 apply_color
+apply_reactive_color
 
 while true; do
     inotifywait -qq -t 60 -e close_write,move,create,delete "$CONFIG_DIR" >/dev/null 2>&1 || true
     apply_color
+    apply_reactive_color
 done
