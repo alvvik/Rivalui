@@ -46,7 +46,11 @@ fn normalize_color(color: Option<String>) -> Result<Option<String>, String> {
 
 fn parse_color_value(value: &str) -> Option<String> {
     let normalized = value.trim().trim_start_matches('#').to_ascii_lowercase();
-    if normalized.len() == 6 && normalized.chars().all(|character| character.is_ascii_hexdigit()) {
+    if normalized.len() == 6
+        && normalized
+            .chars()
+            .all(|character| character.is_ascii_hexdigit())
+    {
         Some(normalized)
     } else {
         None
@@ -55,7 +59,15 @@ fn parse_color_value(value: &str) -> Option<String> {
 
 fn read_color_config_values(
     config_path: &PathBuf,
-) -> Result<(Option<String>, Option<String>, Option<String>, Option<String>), String> {
+) -> Result<
+    (
+        Option<String>,
+        Option<String>,
+        Option<String>,
+        Option<String>,
+    ),
+    String,
+> {
     let contents = match fs::read_to_string(config_path) {
         Ok(contents) => contents,
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
@@ -275,7 +287,6 @@ async fn set_reactive_color(color: String) -> Result<String, String> {
     let color =
         normalize_color(Some(color))?.ok_or_else(|| "Select a reactive color".to_string())?;
 
-    // Apply immediately for instant feedback in the UI.
     let output = tokio::process::Command::new("rivalcfg")
         .args(["--reactive-color", &color])
         .env_remove("PYTHONHOME")
@@ -288,7 +299,6 @@ async fn set_reactive_color(color: String) -> Result<String, String> {
         return Err(String::from_utf8_lossy(&output.stderr).to_string());
     }
 
-    // Persist so systemd user service can re-apply it after PC login.
     let config_path = color_config_path()?;
     let (top_color, middle_color, bottom_color, _) = read_color_config_values(&config_path)?;
 
